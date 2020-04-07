@@ -42,7 +42,7 @@ cmake --build . --target check-mlir
 ```
 For Windows, you need to git clone llvm with ```--config core.autocrlf=false``` as follows:
 ```
-git clone --config core.autocrlf=false https://github.com/llvm/llvm-project.git
+git clone --config core.autocrlf=false https://github.com/jacky82226/onnx-mlir/tree/windows-dev
 ```
 
 Two environment variables need to be set:
