@@ -10,6 +10,13 @@ gcc >= 6.4
 libprotoc >= 3.11.0
 cmake >= 3.15.4
 ```
+For Windows, you need to install protobuf in DLL way by adding flag ```-Dprotobuf_BUILD_SHARED_LIBS=ON``` when invoking cmake and additionally install ZLib. After installing them, add ```C:\Path\to\install\bin``` into system PATH.
+
+Besides, we recommend to use Microsoft Visual Studio C++ compiler as the C++ compiler for building cmake in Windows.
+```
+Microsoft Visual Studio >= Version 16.5.0
+```
+
 
 ## Installation
 
@@ -33,12 +40,16 @@ cmake -G Ninja ../llvm \
 cmake --build . --target -- ${MAKEFLAGS}
 cmake --build . --target check-mlir
 ```
+For Windows, you need to git clone llvm with ```--config core.autocrlf=false``` as follows:
+```
+git clone --config core.autocrlf=false https://github.com/llvm/llvm-project.git
+```
 
 Two environment variables need to be set:
 - LLVM_PROJ_SRC should point to the llvm-project src directory (e.g., llvm-project/).
 - LLVM_PROJ_BUILD should point to the llvm-project build directory (e.g., llvm-project/build).
 
-To build ONNX-MLIR, use the following command:
+To build ONNX-MLIR in Unix-like system, use the following command:
 
 [same-as-file]: <> ({"ref": "utils/install-onnx-mlir.sh", "skip-doc": 2})
 ```
@@ -58,6 +69,33 @@ cmake --build . --target check-mlir-lit
 ```
 
 After the above commands succeed, an `onnx-mlir` executable should appear in the `bin` directory. 
+
+To build ONNX-MLIR in Windows, use the following command:
+```
+git clone --config core.autocrlf=false --recursive git@github.com:onnx/onnx-mlir.git
+
+# Export environment variables pointing to LLVM-Projects.
+set LLVM_PROJ_SRC=$(pwd)/llvm-project/
+set LLVM_PROJ_BUILD=$(pwd)/llvm-project/build
+
+mkdir onnx-mlir/build && cd onnx-mlir/build
+cmake ..
+```
+Then you will see ```onnx-mlir.sln``` under your ```build/```. Open it via Visual Studio.
+There is a solution exporler on the right side. 
+Right click `onnx` and choose Properties -> C/C++ -> Treat Warnings As Errors.
+Change Yes (/WX) into No (/WX-). 
+Do the same thing to `onnx_proto` as well.
+
+Finally, right click `onnx-mlir` and choose Build.
+
+After the above commands succeed, an `onnx-mlir.exe` executable should appear in the `bin/Debug` directory. 
+
+For testing, right click `onnx-mlir-opt` and choose Properties -> C/C++ -> Treat Warnings As Errors.
+Change Yes (/WX) into No (/WX-). 
+
+Then, right click `check-mlir-lit` and choose Build.
+It will show the testing result on the console. 
 
 ## Using ONNX MLIR
 
