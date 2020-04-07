@@ -12,14 +12,12 @@ target_link_libraries(onnx-mlir-opt
         OMKrnlToLLVM
         OMShapeInference
         OMONNXToKrnl
+        OMONNXRewrite
+        OMShapeInference
         OMPromotableConstOperandsOpInterface
-        curses)
+        OMAttributePromotion)
+        #curses)  for windows
 whole_archive_link_mlir(onnx-mlir-opt
         ${MLIRWholeArchiveLibs})
 whole_archive_link_onnx_mlir(onnx-mlir-opt
-        OMKrnlToAffine
-        OMKrnlToLLVM
-        OMONNXToKrnl
-        OMONNXRewrite
-        OMShapeInference
-        OMAttributePromotion)
+        OMKrnlToAffine)

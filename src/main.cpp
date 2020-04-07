@@ -6,6 +6,10 @@
 //
 //===----------------------------------------------------------------------===//
 
+// Using dynamic libprotobuf for Windows
+
+#define PROTOBUF_USE_DLLS  
+
 #include <cmath>
 #include <iostream>
 
