@@ -42,7 +42,7 @@ cmake --build . --target check-mlir
 ```
 For Windows, you need to git clone llvm with ```--config core.autocrlf=false``` as follows:
 ```
-git clone --config core.autocrlf=false https://github.com/jacky82226/onnx-mlir/tree/windows-dev
+git clone --config core.autocrlf=false https://github.com/llvm/llvm-project.git
 ```
 
 Two environment variables need to be set:
@@ -72,7 +72,7 @@ After the above commands succeed, an `onnx-mlir` executable should appear in the
 
 To build ONNX-MLIR in Windows, use the following command:
 ```
-git clone --config core.autocrlf=false --recursive git@github.com:onnx/onnx-mlir.git
+git clone --config core.autocrlf=false --recursive --single-branch --branch windows-dev https://github.com/jacky82226/onnx-mlir.git
 
 # Export environment variables pointing to LLVM-Projects.
 set LLVM_PROJ_SRC=$(pwd)/llvm-project/
