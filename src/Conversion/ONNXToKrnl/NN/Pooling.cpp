@@ -20,12 +20,11 @@ Value getIdentityValue<ONNXMaxPoolSingleOutOp>(
 }
 
 template <>
-Value mapToLowerScalarOp<ONNXMaxPoolSingleOutOp>(Operation *op,
-    ArrayRef<Type> result_types, ArrayRef<Value> operands,
-    ConversionPatternRewriter &rewriter) {
-  auto loc = op->getLoc();
-  Value lhs = operands[0];
-  Value rhs = operands[1];
+Value emitScalarOpFor<ONNXMaxPoolSingleOutOp>(
+    ConversionPatternRewriter &rewriter, Location loc, Operation *op,
+    Type elementType, ArrayRef<Value> scalarOperands) {
+  Value lhs = scalarOperands[0];
+  Value rhs = scalarOperands[1];
   auto max = rewriter.create<CmpFOp>(loc, CmpFPredicate::OGT, lhs, rhs);
   auto result = rewriter.create<SelectOp>(loc, max, lhs, rhs);
   return result;
@@ -36,8 +35,9 @@ struct ONNXMaxPoolSingleOutOpLowering : public ConversionPattern {
       : ConversionPattern(
             mlir::ONNXMaxPoolSingleOutOp::getOperationName(), 1, ctx) {}
 
-  PatternMatchResult matchAndRewrite(Operation *op, ArrayRef<Value> operands,
+  LogicalResult matchAndRewrite(Operation *op, ArrayRef<Value> operands,
       ConversionPatternRewriter &rewriter) const final {
+    ONNXMaxPoolSingleOutOpOperandAdaptor operandAdaptor(operands);
     auto loc = op->getLoc();
 
     // Match
@@ -71,7 +71,7 @@ struct ONNXMaxPoolSingleOutOpLowering : public ConversionPattern {
       dilations.emplace_back(dilation.cast<IntegerAttr>().getInt());
 
     // Type information about the input and result of this operation.
-    auto &inputOperand = operands[0];
+    auto inputOperand = operandAdaptor.X();
     auto inputShape = inputOperand.getType().cast<MemRefType>().getShape();
     auto memRefType = convertToMemRefType(*op->result_type_begin());
     auto resultShape = memRefType.getShape();
@@ -307,14 +307,14 @@ struct ONNXMaxPoolSingleOutOpLowering : public ConversionPattern {
         auto loadData = rewriter.create<LoadOp>(loc, inputOperand, dataIndices);
         auto loadPartialResult =
             rewriter.create<LoadOp>(loc, alloc, resultIndices);
-        Value result = mapToLowerScalarOp<ONNXMaxPoolSingleOutOp>(
-            op, resultElementType, {loadPartialResult, loadData}, rewriter);
+        Value result = emitScalarOpFor<ONNXMaxPoolSingleOutOp>(rewriter, loc,
+            op, resultElementType, {loadPartialResult, loadData});
         rewriter.create<StoreOp>(loc, result, alloc, resultIndices);
       }
     }
     rewriter.replaceOp(op, alloc);
 
-    return matchSuccess();
+    return success();
   }
 };
 

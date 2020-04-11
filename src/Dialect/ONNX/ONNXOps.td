@@ -61,6 +61,7 @@ class ONNX_Op<string mnemonic, list<OpTrait> traits = []> :
 // 4. type of string, complex64 and complex128 for input/output are ignored 
 // 5. unsigned int are treated as signed one
 
+include "mlir/Interfaces/SideEffects.td"
 include "src/Dialect/ONNX/ONNXOps.td.inc"
 
 // Indicate entry point functions of ONNX graph.
@@ -94,25 +95,6 @@ def ONNXEntryPointOp: ONNX_Op<"EntryPoint"> {
 // In the operations below we include the variants with missing operands
 // or outputs. This decision affects only ONNX operations with optional
 // arguments not ONNX operations with variadic operands.
-
-def ONNXConvNoBiasOp:ONNX_Op<"ConvNoBias",
-    [NoSideEffect, DeclareOpInterfaceMethods<ShapeInferenceOpInterface>]> {
-  let hasCanonicalizer = 1;
-  let summary = "ONNX Conv operation with no Bias operand.";
-  let description = [{
-    "The convolution operator consumes an input tensor and a filter, and"
-    "computes the output."
-  }];
-  let arguments = (ins AnyTypeOf<[AnyMemRef, AnyTensor]>:$X,
-           AnyTypeOf<[AnyMemRef, AnyTensor]>:$W,
-           DefaultValuedAttr<StrAttr, "NOTSET">:$auto_pad,
-           OptionalAttr<I64ArrayAttr>:$dilations,
-           DefaultValuedAttr<I64Attr, "1">:$group,
-           OptionalAttr<I64ArrayAttr>:$kernel_shape,
-           OptionalAttr<I64ArrayAttr>:$pads,
-           OptionalAttr<I64ArrayAttr>:$strides);
-  let results = (outs AnyTypeOf<[AnyMemRef, AnyTensor]>:$o_Y);
-}
 
 def ONNXMaxPoolSingleOutOp: ONNX_Op<"MaxPoolSingleOut",
     [NoSideEffect, DeclareOpInterfaceMethods<ShapeInferenceOpInterface>]> {

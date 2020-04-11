@@ -18,7 +18,7 @@ jobs:
             git submodule update --init --recursive
       # Use cached mlir installation if possible.
       - restore_cache:
-          key: V9-LLVM-PROJECT-{{ arch }}
+          key: V10-1-LLVM-PROJECT-{{ arch }}
       - run:
           name: Install MLIR
           command: |
@@ -29,7 +29,7 @@ jobs:
               source onnx-mlir/utils/install-mlir.sh
             fi
       - save_cache:
-          key: V9-LLVM-PROJECT-{{ arch }}
+          key: V10-1-LLVM-PROJECT-{{ arch }}
           paths:
             - llvm-project
       - run:
@@ -40,7 +40,7 @@ jobs:
           command: |
             sudo pip install -q -e ./onnx-mlir/third_party/onnx
             cd onnx-mlir/build
-            cmake --build . --target run-onnx-backend-test
+            cmake --build . --target check-onnx-backend
       - run:
           name: Run DocCheck
           command: cd onnx-mlir/build && cmake --build . --target check-doc
@@ -50,7 +50,7 @@ jobs:
             cd onnx-mlir/build
             cmake --build . --target onnx-mlir-doc
             # Check whether dialect documentation is up-to-date.
-            diff doc/Dialects ../doc/Dialects
+            diff docs/Dialects ../docs/Dialects
       - run:
           name: Print the Current Time
           command: date
