@@ -6,7 +6,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-#include "src/MainUtils.hpp"
+#define PROTOBUF_USE_DLLS  
 
 using namespace std;
 using namespace onnx_mlir;

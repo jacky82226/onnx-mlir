@@ -12,7 +12,6 @@ target_link_libraries(OMBuilder
         OMONNXOps
         onnx
         ${MLIRLibs}
-        curses
         mpark_variant)
 target_include_directories(OMBuilder
                            PUBLIC
