@@ -9,8 +9,16 @@ jobs:
     vmImage: 'windows-2019'
   strategy:
     maxParallel: 4
+  variables:
+    CCACHE_DIR: '$(Pipeline.Workspace)/ccache'
 
   steps:
+  - task: Cache@2
+    inputs:
+      key: 'ccache | "$(System.JobName)"'
+      path: $(CCACHE_DIR)
+    displayName: Setup ccache
+
   - task: UsePythonVersion@0
     inputs:
       versionSpec: '3.7.9'
